@@ -8,14 +8,40 @@ Offline GNOME desktop app for English proofreading using a local [Ollama](https:
 - **Python:** 3.12+
 - **Ollama:** running locally on `http://localhost:11434` with a model installed (default: `llama3.2:latest`)
 
+## Install (recommended)
+
+From the repository root on Ubuntu/Debian:
+
+```bash
+./install.sh
+```
+
+This installs system packages (via `apt`), creates a project `.venv`, installs the app in editable mode, and registers the GNOME menu entry under `~/.local`.
+
+Options:
+
+- `./install.sh --help` — usage and options
+- `./install.sh --dry-run` — list planned steps without changing the system
+
+Ollama is not installed by the script. After install:
+
+```bash
+ollama serve
+ollama pull llama3.2
+```
+
+## Manual setup (fallback)
+
+Use this on non-Debian systems or if you prefer to install step by step.
+
 ### System packages (Ubuntu 24.04)
 
 ```bash
 sudo apt install python3-gi python3-gi-cairo gir1.2-gtk-4.0 gir1.2-adw-1 \
-  libgirepository-2.0-dev gcc libcairo2-dev pkg-config
+  libgirepository-2.0-dev gcc libcairo2-dev pkg-config python3-venv python3-pip
 ```
 
-## Development setup
+### Python virtualenv
 
 ```bash
 python3 -m venv .venv
@@ -39,11 +65,12 @@ english-please
 
 ## GNOME integration
 
-### Applications menu
+`./install.sh` installs the applications menu entry and icon automatically. To install them manually:
 
 ```bash
-cp data/com.viniciuskr.EnglishPlease.desktop ~/.local/share/applications/
-mkdir -p ~/.local/share/icons/hicolor/scalable/apps
+mkdir -p ~/.local/share/applications ~/.local/share/icons/hicolor/scalable/apps
+sed "s|^Exec=.*|Exec=$(pwd)/.venv/bin/english-please|" \
+  data/com.viniciuskr.EnglishPlease.desktop >~/.local/share/applications/com.viniciuskr.EnglishPlease.desktop
 cp data/icons/com.viniciuskr.EnglishPlease.svg \
   ~/.local/share/icons/hicolor/scalable/apps/com.viniciuskr.EnglishPlease.svg
 update-desktop-database ~/.local/share/applications/
@@ -52,7 +79,7 @@ update-desktop-database ~/.local/share/applications/
 ### Global shortcut (suggested: Super+E)
 
 1. Open **Settings → Keyboard → Keyboard Shortcuts → Custom Shortcuts**
-2. Add a shortcut named `English, Please` with command `english-please`
+2. Add a shortcut named `English, Please` with command `/path/to/repo/.venv/bin/english-please` (or `english-please` if it is on your PATH)
 3. Assign **Super+E** (or your preferred binding)
 
 Pressing the shortcut while the app is already running focuses the existing window (single-instance).

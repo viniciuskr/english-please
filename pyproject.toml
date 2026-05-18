@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "english-please"
+version = "0.1.0"
+description = "Offline GNOME English proofreading via local Ollama"
+readme = "README.md"
+requires-python = ">=3.12"
+license = { text = "MIT" }
+dependencies = [
+    "PyGObject>=3.46",
+    "aiohttp>=3.9",
+]
+
+[project.scripts]
+english-please = "english_please.main:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

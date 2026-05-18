@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=English, Please
+Comment=Offline English proofreading with local Ollama
+Exec=english-please
+Icon=com.viniciuskr.EnglishPlease
+Terminal=false
+Type=Application
+Categories=Utility;TextTools;
+StartupWMClass=com.viniciuskr.EnglishPlease

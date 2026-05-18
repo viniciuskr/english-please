@@ -163,11 +163,11 @@ class MainWindow(Adw.ApplicationWindow):
 
         text = self._get_input_text()
         model = self._config.model
-        app = self.get_application()
-        session = app.get_http_session()  # type: ignore[attr-defined]
 
         def run_in_thread() -> None:
             loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            session = aiohttp.ClientSession(loop=loop)
             try:
                 result = loop.run_until_complete(review_text(session, text, model))
                 GLib.idle_add(self._on_review_success, result)
@@ -176,6 +176,7 @@ class MainWindow(Adw.ApplicationWindow):
             except Exception as exc:  # noqa: BLE001
                 GLib.idle_add(self._on_review_failure, f"Unexpected error: {exc}")
             finally:
+                loop.run_until_complete(session.close())
                 loop.close()
                 GLib.idle_add(self._set_review_busy, False)
 
